@@ -68,6 +68,7 @@ namespace PrintDump
             escapeSequences.Add(0x4A, new EscapeSequence("n/180 inch line feed", 1));
             escapeSequences.Add(0x44, new CustomEscapeSequence("set horizontal tabs", input => { byte next; while ((next = (byte)input.ReadByte()) != 0) { Console.Write(" " + next); } Console.WriteLine(); }));
             escapeSequences.Add(0x24, new CustomEscapeSequence("set absolute position", input => { uint n1 = (byte)input.ReadByte(); uint n2 = (byte)input.ReadByte(); Console.WriteLine(" " + (n1 + 256 * n2)); }));
+            escapeSequences.Add(0x78, new EscapeSequence("letter quality mode", 1));
             escapeSequences.Add(0x2A, new CustomEscapeSequence("graphics mode", input =>
             {
                 byte m = (byte)input.ReadByte();
@@ -119,7 +120,7 @@ namespace PrintDump
                 }
                 else
                 {
-                    if ((next >= 'a' && next <= 'z') || (next >= 'A' && next <= 'Z') || (next >= '0' && next <= '9'))
+                    if (!Char.IsControl((char)next))
                     {
                         lastWasChar = true;
                         Console.Write((char)next);
